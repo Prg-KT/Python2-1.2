@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#172554">
+<title>Pythonプログラミング実習②－1 類題クイズ</title>
+
+<style>
+:root{
+  --navy:#172554;
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --green:#15803d;
+  --red:#dc2626;
+  --orange:#d97706;
+  --light-blue:#eff6ff;
+  --light-green:#f0fdf4;
+  --light-red:#fef2f2;
+  --light-orange:#fffbeb;
+  --gray-50:#f8fafc;
+  --gray-100:#f1f5f9;
+  --gray-200:#e2e8f0;
+  --gray-300:#cbd5e1;
+  --gray-500:#64748b;
+  --gray-700:#334155;
+  --white:#fff;
+  --shadow:0 10px 30px rgba(15,23,42,.10);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  color:#0f172a;
+  background:
+    radial-gradient(circle at top right,#dbeafe 0,transparent 30%),
+    linear-gradient(180deg,#f8fafc,#eef2ff);
+  font-family:
+    -apple-system,BlinkMacSystemFont,"Segoe UI",
+    "Noto Sans JP","Yu Gothic",Meiryo,sans-serif;
+  line-height:1.75;
+}
+
+button,
+input{
+  font:inherit;
+}
+
+button{
+  touch-action:manipulation;
+}
+
+button:focus-visible,
+input:focus-visible{
+  outline:3px solid rgba(59,130,246,.35);
+  outline-offset:2px;
+}
+
+/* ヘッダー */
+
+.app-header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+  color:#fff;
+  background:rgba(23,37,84,.97);
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px rgba(15,23,42,.18);
+}
+
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+}
+
+.header-main{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.header-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.header-title h1{
+  margin:0;
+  overflow:hidden;
+  font-size:clamp(16px,4.4vw,24px);
+  line-height:1.3;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.counter{
+  flex-shrink:0;
+  padding:5px 10px;
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  font-size:13px;
+  font-weight:800;
+}
+
+.header-reset{
+  flex-shrink:0;
+  min-height:38px;
+  padding:6px 12px;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:10px;
+  color:#fff;
+  background:rgba(255,255,255,.12);
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.header-reset:hover{
+  background:rgba(255,255,255,.22);
+}
+
+.progress-track{
+  height:8px;
+  margin-top:10px;
+  overflow:hidden;
+  border-radius:999px;
+  background:rgba(255,255,255,.18);
+}
+
+.progress-bar{
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#38bdf8,#4ade80);
+  transition:width .3s ease;
+}
+
+/* メイン */
+
+main{
+  width:min(calc(100% - 24px),1200px);
+  margin:20px auto 125px;
+}
+
+.intro,
+.quiz-card,
+.result-card{
+  border:1px solid rgba(148,163,184,.28);
+  border-radius:20px;
+  background:rgba(255,255,255,.96);
+  box-shadow:var(--shadow);
+}
+
+.intro{
+  padding:20px;
+  margin-bottom:18px;
+}
+
+.intro h2{
+  margin:0 0 8px;
+  color:var(--navy);
+  font-size:21px;
+}
+
+.intro p{
+  margin:5px 0;
+  color:var(--gray-700);
+}
+
+.notice{
+  margin-top:13px;
+  padding:12px 14px;
+  border-left:5px solid var(--blue);
+  border-radius:10px;
+  background:var(--light-blue);
+  font-size:14px;
+}
+
+.pc-help{
+  display:none;
+  margin-top:8px;
+  color:var(--gray-500);
+  font-size:13px;
+}
+
+/* 問題 */
+
+.quiz-card{
+  display:none;
+  padding:18px;
+  animation:fadeIn .22s ease;
+}
+
+.quiz-card.active{
+  display:block;
+}
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(7px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.category{
+  display:inline-flex;
+  align-items:center;
+  margin-bottom:10px;
+  padding:4px 10px;
+  border-radius:999px;
+  color:#1e40af;
+  background:#dbeafe;
+  font-size:12px;
+  font-weight:850;
+}
+
+.question-number{
+  margin:0 0 10px;
+  color:var(--navy);
+  font-size:23px;
+}
+
+.question-text{
+  margin-bottom:14px;
+  font-weight:650;
+  white-space:pre-wrap;
+}
+
+.context{
+  margin:13px 0;
+  padding:13px;
+  border:1px solid var(--gray-200);
+  border-radius:12px;
+  background:var(--gray-50);
+}
+
+pre{
+  max-width:100%;
+  margin:12px 0;
+  padding:15px;
+  overflow-x:auto;
+  border:1px solid var(--gray-300);
+  border-radius:12px;
+  color:#e2e8f0;
+  background:#0f172a;
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  font-size:14px;
+  line-height:1.65;
+  tab-size:4;
+  white-space:pre;
+}
+
+/* 選択肢 */
+
+.options{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:14px;
+}
+
+.option{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+  min-width:0;
+  min-height:56px;
+  padding:13px;
+  border:2px solid var(--gray-200);
+  border-radius:13px;
+  background:#fff;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.option:hover{
+  border-color:#93c5fd;
+  box-shadow:0 4px 12px rgba(15,23,42,.06);
+}
+
+.option:active{
+  transform:scale(.99);
+}
+
+.option:has(input:checked){
+  border-color:var(--blue);
+  background:var(--light-blue);
+}
+
+.option input{
+  width:21px;
+  height:21px;
+  margin:3px 0 0;
+  flex:0 0 auto;
+  accent-color:var(--blue);
+}
+
+.option-label{
+  font-weight:850;
+  color:var(--navy);
+}
+
+.option-text{
+  display:block;
+  min-width:0;
+  flex:1;
+  overflow-wrap:anywhere;
+  white-space:pre-wrap;
+}
+
+/* 入力 */
+
+.text-answer{
+  width:100%;
+  min-height:54px;
+  margin-top:10px;
+  padding:13px 14px;
+  border:2px solid var(--gray-200);
+  border-radius:12px;
+  outline:none;
+  background:#fff;
+  font-family:"SFMono-Regular",Consolas,monospace;
+  font-size:16px;
+}
+
+.text-answer:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+
+/* ○× */
+
+.tf-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.tf-row{
+  min-width:0;
+  padding:13px;
+  border:1px solid var(--gray-200);
+  border-radius:13px;
+  background:var(--gray-50);
+}
+
+.tf-statement{
+  margin-bottom:10px;
+}
+
+.tf-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.tf-buttons label{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:46px;
+  border:2px solid var(--gray-200);
+  border-radius:10px;
+  background:#fff;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.tf-buttons label:hover{
+  border-color:#93c5fd;
+}
+
+.tf-buttons label:has(input:checked){
+  border-color:var(--blue);
+  color:var(--blue-dark);
+  background:var(--light-blue);
+}
+
+.tf-buttons input{
+  margin-right:7px;
+  accent-color:var(--blue);
+}
+
+/* 正解・解説 */
+
+.feedback{
+  display:none;
+  margin-top:16px;
+  padding:15px;
+  border-radius:13px;
+}
+
+.feedback.show{
+  display:block;
+}
+
+.feedback.correct{
+  border:1px solid #86efac;
+  color:#14532d;
+  background:var(--light-green);
+}
+
+.feedback.incorrect{
+  border:1px solid #fca5a5;
+  color:#7f1d1d;
+  background:var(--light-red);
+}
+
+.feedback.revealed{
+  border:1px solid #fbbf24;
+  color:#78350f;
+  background:var(--light-orange);
+}
+
+.feedback-title{
+  margin-bottom:7px;
+  font-size:18px;
+  font-weight:900;
+}
+
+.answer-box{
+  margin-top:9px;
+  padding-top:9px;
+  border-top:1px dashed currentColor;
+  white-space:pre-wrap;
+}
+
+.explanation-box{
+  margin-top:10px;
+}
+
+.reveal-note{
+  margin-top:10px;
+  font-size:14px;
+}
+
+/* 操作ボタン */
+
+.controls{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:9px;
+  margin-top:19px;
+}
+
+.control-bottom{
+  display:grid;
+  grid-template-columns:1fr 1.35fr;
+  gap:9px;
+}
+
+.btn{
+  min-width:0;
+  min-height:52px;
+  padding:11px 15px;
+  border:0;
+  border-radius:13px;
+  font-weight:850;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.btn:hover{
+  filter:brightness(1.04);
+}
+
+.btn:active{
+  transform:scale(.985);
+}
+
+.btn-secondary{
+  color:var(--navy);
+  background:var(--gray-100);
+}
+
+.btn-primary{
+  color:#fff;
+  background:linear-gradient(135deg,#2563eb,#1d4ed8);
+  box-shadow:0 6px 16px rgba(37,99,235,.23);
+}
+
+.btn-answer{
+  color:#fff;
+  background:linear-gradient(135deg,#f59e0b,#d97706);
+  box-shadow:0 6px 16px rgba(217,119,6,.2);
+}
+
+.btn-answer.open{
+  color:#78350f;
+  background:#fef3c7;
+  box-shadow:none;
+}
+
+.btn-submit{
+  color:#fff;
+  background:linear-gradient(135deg,#16a34a,#15803d);
+}
+
+.btn:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+  box-shadow:none;
+}
+
+/* 下部ナビ */
+
+.bottom-nav{
+  position:fixed;
+  z-index:30;
+  right:0;
+  bottom:0;
+  left:0;
+  padding:9px 12px calc(9px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--gray-200);
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(12px);
+}
+
+.number-list{
+  display:flex;
+  max-width:1200px;
+  margin:auto;
+  gap:7px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+
+.number-list::-webkit-scrollbar{
+  display:none;
+}
+
+.number-btn{
+  flex:0 0 40px;
+  height:40px;
+  border:1px solid var(--gray-200);
+  border-radius:10px;
+  color:var(--gray-700);
+  background:#fff;
+  font-weight:850;
+  cursor:pointer;
+}
+
+.number-btn.answered{
+  border-color:#86efac;
+  color:#166534;
+  background:#dcfce7;
+}
+
+.number-btn.viewed{
+  border-color:#fbbf24;
+  color:#92400e;
+  background:#fef3c7;
+}
+
+.number-btn.current{
+  border-color:var(--blue);
+  color:#fff;
+  background:var(--blue);
+}
+
+/* 結果 */
+
+.result-card{
+  display:none;
+  padding:22px;
+  text-align:center;
+}
+
+.result-card.show{
+  display:block;
+}
+
+.score-circle{
+  display:grid;
+  width:160px;
+  height:160px;
+  margin:20px auto;
+  place-items:center;
+  border:13px solid #bfdbfe;
+  border-radius:50%;
+  color:var(--navy);
+  background:#fff;
+}
+
+.score-main{
+  font-size:38px;
+  font-weight:950;
+  line-height:1;
+}
+
+.score-sub{
+  color:var(--gray-500);
+  font-size:14px;
+}
+
+.result-message{
+  font-size:19px;
+  font-weight:850;
+}
+
+.result-actions{
+  display:grid;
+  gap:10px;
+  margin-top:20px;
+}
+
+.review-list{
+  margin-top:20px;
+  text-align:left;
+}
+
+.review-item{
+  margin:9px 0;
+  padding:12px;
+  border-radius:10px;
+  background:var(--gray-50);
+}
+
+.review-item.ok{
+  border-left:5px solid var(--green);
+}
+
+.review-item.ng{
+  border-left:5px solid var(--red);
+}
+
+.small{
+  color:var(--gray-500);
+  font-size:13px;
+}
+
+/* PC表示 */
+
+@media(min-width:900px){
+  body{
+    font-size:17px;
+    line-height:1.8;
+  }
+
+  .header-inner,
+  main,
+  .number-list{
+    max-width:1200px;
+  }
+
+  main{
+    width:calc(100% - 40px);
+    margin-top:28px;
+  }
+
+  .app-header{
+    padding:13px 20px 12px;
+  }
+
+  .header-title h1{
+    font-size:24px;
+  }
+
+  .counter{
+    padding:6px 12px;
+    font-size:14px;
+  }
+
+  .header-reset{
+    min-height:42px;
+    padding:7px 14px;
+    font-size:14px;
+  }
+
+  .intro{
+    padding:26px 30px;
+  }
+
+  .intro h2{
+    font-size:25px;
+  }
+
+  .notice{
+    padding:14px 16px;
+    font-size:16px;
+  }
+
+  .pc-help{
+    display:block;
+    font-size:14px;
+  }
+
+  .quiz-card{
+    padding:32px 36px;
+  }
+
+  .category{
+    padding:5px 12px;
+    font-size:14px;
+  }
+
+  .question-number{
+    font-size:30px;
+  }
+
+  .question-text{
+    font-size:19px;
+    line-height:1.85;
+  }
+
+  pre{
+    padding:20px;
+    font-size:16px;
+    line-height:1.75;
+  }
+
+  .option{
+    min-height:64px;
+    padding:16px;
+  }
+
+  .option-label{
+    font-size:18px;
+  }
+
+  .option-text{
+    font-size:17px;
+  }
+
+  .text-answer{
+    min-height:62px;
+    padding:15px 17px;
+    font-size:18px;
+  }
+
+  .feedback{
+    padding:18px;
+    font-size:17px;
+  }
+
+  .feedback-title{
+    font-size:21px;
+  }
+
+  .controls{
+    grid-template-columns:minmax(0,1fr) minmax(0,2fr);
+    gap:12px;
+  }
+
+  .control-bottom{
+    grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);
+    gap:12px;
+  }
+
+  .btn{
+    min-height:58px;
+    font-size:17px;
+  }
+
+  .number-btn{
+    flex-basis:44px;
+    height:44px;
+    font-size:16px;
+  }
+
+  .result-card{
+    padding:35px;
+  }
+
+  .result-actions{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(min-width:1250px){
+  body{
+    font-size:18px;
+  }
+
+  .header-inner,
+  main,
+  .number-list{
+    max-width:1320px;
+  }
+
+  .quiz-card{
+    padding:38px 44px;
+  }
+
+  .question-text{
+    font-size:20px;
+  }
+
+  .options.two-column{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .tf-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .tf-row:last-child:nth-child(odd){
+    grid-column:1/-1;
+  }
+}
+
+@media(max-width:520px){
+  .header-title h1{
+    max-width:170px;
+  }
+
+  .header-reset{
+    padding:6px 9px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-main">
+      <div class="header-title">
+        <h1>Pythonプログラミング実習②－1</h1>
+        <div class="counter" id="counter">1 / 26</div>
+      </div>
+
+      <button
+        type="button"
+        class="header-reset"
+        onclick="resetQuiz()"
+      >
+        ↻ リセット
+      </button>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="intro" id="intro">
+    <h2>定期考査対策・類題クイズ</h2>
+
+    <p>元の問題と同じ学習範囲から作成した全26問です。</p>
+    <p>数値・変数名・条件・空欄の位置などを変更しています。</p>
+
+    <div class="notice">
+      「答え合わせ」を押しても、自動では次の問題へ進みません。
+      解説を読んだ後に「次の問題へ」を押してください。
+      分からない場合は、未回答のまま「答えを見る」を押せます。
+      もう一度押すと、答えと解説を隠せます。
+    </div>
+
+    <div class="pc-help">
+      PCでは、入力欄を操作していないときにキーボードの「←」「→」でも問題を移動できます。
+    </div>
+  </section>
+
+  <div id="quizContainer"></div>
+
+  <section class="result-card" id="resultCard">
+    <h2>採点結果</h2>
+
+    <div class="score-circle">
+      <div>
+        <div class="score-main" id="scoreMain">0</div>
+        <div class="score-sub" id="scoreSub">/ 26問</div>
+      </div>
+    </div>
+
+    <div class="result-message" id="resultMessage"></div>
+    <div class="review-list" id="reviewList"></div>
+
+    <div class="result-actions">
+      <button
+        type="button"
+        class="btn btn-primary"
+        onclick="reviewMistakes()"
+      >
+        間違えた問題を確認
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        onclick="resetQuiz()"
+      >
+        最初からやり直す
+      </button>
+    </div>
+  </section>
+</main>
+
+<nav class="bottom-nav" id="bottomNav">
+  <div class="number-list" id="numberList"></div>
+</nav>
+
+<script>
+const questions=[
+  {
+    category:"独自の関数とジェネレータ",
+    type:"text",
+    text:`下記の条件に合う関数宣言を記述しなさい。
+
+関数名：average
+引数：x, y`,
+    answer:"def average(x, y):",
+    accepted:[
+      "defaverage(x,y):"
+    ],
+    explanation:"Pythonで関数を定義するときは「def 関数名(引数):」の形で記述します。今回は関数名がaverage、引数がxとyなので「def average(x, y):」となります。最後のコロンも必要です。"
+  },
+  {
+    category:"独自の関数とジェネレータ",
+    type:"text",
+    text:"関数の目的や引数、戻り値などを説明するために記述する文字列の名称と、その文字列を記述する場所をそれぞれ答えなさい（完答）。",
+    placeholder:"例：名称、記述する場所",
+    answer:"名称：docstring（ドキュメンテーション文字列）／場所：関数定義の直下",
+    requiredWords:[
+      ["docstring","ドキュメンテーション文字列","ドックストリング"],
+      ["関数定義の直下","関数宣言の直下","関数の直下","defの直下"]
+    ],
+    explanation:"関数の説明として記述する文字列はdocstringと呼ばれます。defで始まる関数定義の直下に、通常は三重引用符を使って記述します。help()などから内容を確認することもできます。"
+  },
+  {
+    category:"独自の関数とジェネレータ",
+    type:"choice",
+    text:"下記のプログラムの実行結果をア～オの中から答えなさい。",
+    code:`def sub(a, b=4):
+    return a - b
+
+print(sub(11))`,
+    options:[
+      ["ア","「4」と表示される"],
+      ["イ","「7」と表示される"],
+      ["ウ","「11」と表示される"],
+      ["エ","「15」と表示される"],
+      ["オ","エラーが発生する"]
+    ],
+    answer:"イ",
+    explanation:"sub(11)ではaに11が入ります。bは指定されていないため、デフォルト値の4が使われます。したがって11 - 4が計算され、7と表示されます。"
+  },
+  {
+    category:"独自の関数とジェネレータ",
+    type:"choice",
+    text:"下記のプログラムの実行結果をア～オの中から答えなさい。",
+    code:`def power(base, exp):
+    return base ** exp
+
+print(power(exp=3, base=2))`,
+    options:[
+      ["ア","「5」と表示される"],
+      ["イ","「6」と表示される"],
+      ["ウ","「8」と表示される"],
+      ["エ","「9」と表示される"],
+      ["オ","エラーが発生する"]
+    ],
+    answer:"ウ",
+    explanation:"名前付き引数を使っているため、記述順ではなく引数名によって値が対応します。baseは2、expは3となり、2 ** 3、つまり2の3乗が計算されます。結果は8です。"
+  },
+  {
+    category:"独自の関数とジェネレータ",
+    type:"text",
+    text:"下記のプログラムの空欄①、②に当てはまるコードを記述しなさい。",
+    code:`colors = ["Red", "Blue", "Green", "White"]
+
+colors = ①(colors)
+
+print("最初の色は", ②(colors), "です。")
+
+for color in colors:
+    print(color)`,
+    placeholder:"例：① ○○　② ○○",
+    answer:"① iter　② next",
+    requiredWords:[
+      ["①iter","1iter","iter"],
+      ["②next","2next","next"]
+    ],
+    explanation:"iter()はリストなどの反復可能なオブジェクトからイテレータを作ります。next()はイテレータから次の要素を1つ取り出します。最初のnext()でRedが取り出されるため、その後のfor文ではBlueから順番に表示されます。"
+  },
+  {
+    category:"独自の関数とジェネレータ",
+    type:"text",
+    text:"通常の関数とジェネレータ関数では、値を返すときに使用する文が異なる。それぞれで使用する文を記述しなさい。",
+    placeholder:"通常の関数：○○　ジェネレータ：○○",
+    answer:"通常の関数：return文／ジェネレータ：yield文",
+    requiredWords:[
+      ["return"],
+      ["yield"]
+    ],
+    explanation:"通常の関数はreturnで値を返すと、原則としてその時点で処理が終了します。ジェネレータ関数はyieldで値を返し、その場所の状態を保存します。次に値を要求されたときは、保存した位置の続きから処理を再開します。"
+  },
+  {
+    category:"無名関数",
+    type:"text",
+    text:"下記のプログラムの実行結果が「12」になるように、空欄①に当てはまるコードを記述しなさい。",
+    code:`def multiply(a, b):
+    return a * b
+
+operation = ①
+
+print(operation(3, 4))`,
+    answer:"multiply",
+    accepted:[
+      "multiply"
+    ],
+    explanation:"関数は変数へ代入できます。ここではmultiply関数そのものをoperationへ代入します。multiply()と丸括弧を付けると、その場で関数を呼び出す意味になるため、答えは丸括弧を付けないmultiplyです。"
+  },
+  {
+    category:"無名関数",
+    type:"choice",
+    text:"下記は、関数オブジェクトを引数に利用したコードの例である。実行結果をア～オの中から答えなさい。",
+    code:`def add(a, b):
+    return a + b
+
+def sub(a, b):
+    return a - b
+
+def calc(func, a, b):
+    return func(a, b)
+
+print(calc(add, 12, 8), end="")
+print(calc(sub, 12, 8))`,
+    options:[
+      ["ア","「164」と表示される"],
+      ["イ","「204」と表示される"],
+      ["ウ","「2012」と表示される"],
+      ["エ","「420」と表示される"],
+      ["オ","エラーが発生する"]
+    ],
+    answer:"イ",
+    explanation:"最初のcalcにはaddが渡されるため、12 + 8で20です。最初のprintにはend=\"\"が指定されているため改行されません。次のcalcは12 - 8で4となり、20と4が連続して204と表示されます。"
+  },
+  {
+    category:"無名関数",
+    type:"choice",
+    text:"下記のlambda式を使用したプログラムの実行結果をア～オの中から答えなさい。",
+    code:`def calc(func, a, b):
+    return func(a, b)
+
+print(calc(lambda a, b: a + b, 9, 4), end="")
+print(calc(lambda a, b: a * b, 9, 4))`,
+    options:[
+      ["ア","「1336」と表示される"],
+      ["イ","「3613」と表示される"],
+      ["ウ","「135」と表示される"],
+      ["エ","「365」と表示される"],
+      ["オ","エラーが発生する"]
+    ],
+    answer:"ア",
+    explanation:"最初のlambda式は9 + 4を計算するため13です。次のlambda式は9 × 4を計算するため36です。最初のprintでは改行されないため、13と36が続いて1336と表示されます。"
+  },
+  {
+    category:"無名関数",
+    type:"text",
+    text:"下記は、map関数とlambda式を使い、リストの各要素を3乗した新しいリストを作るコードである。空欄①に当てはまるコードを記述しなさい。",
+    code:`nums = [1, 2, 3, 4]
+
+result = list(map(①, nums))
+
+print(result)`,
+    answer:"lambda x: x ** 3",
+    accepted:[
+      "lambdax:x**3"
+    ],
+    explanation:"map()の第1引数には、各要素に対して実行する関数を指定します。lambda x: x ** 3は、受け取ったxを3乗して返す無名関数です。結果は[1, 8, 27, 64]になります。"
+  },
+  {
+    category:"無名関数",
+    type:"text",
+    text:"下記は、filter関数とlambda式を使い、偶数だけを取り出すコードである。空欄①に当てはまるコードを記述しなさい。",
+    code:`nums = [1, 2, 3, 4, 5, 6, 7, 8]
+
+result = list(filter(lambda x: ①, nums))
+
+print(result)`,
+    answer:"x % 2 == 0",
+    accepted:[
+      "x%2==0"
+    ],
+    explanation:"偶数は2で割った余りが0になる数です。そのため条件式はx % 2 == 0となります。filter()は条件式がTrueになった要素だけを残すので、結果は[2, 4, 6, 8]です。"
+  },
+  {
+    category:"リスト内包表記・ジェネレータ式",
+    type:"text",
+    text:"下記は、要素と添え字を足し合わせた値を持つリストを生成するコードである。空欄①に当てはまるコードを記述しなさい。",
+    code:`data = [6, 5, 4, 3, 2]
+
+new_list = [① for idx, elem in enumerate(data)]
+
+print(new_list)`,
+    answer:"idx + elem",
+    accepted:[
+      "idx+elem",
+      "elem+idx"
+    ],
+    explanation:"enumerate(data)を使うと、idxには添え字、elemには要素が入ります。空欄には両方を足すidx + elemを記述します。足し算は順番を入れ替えても結果が同じなので、elem + idxも正解です。"
+  },
+  {
+    category:"リスト内包表記・ジェネレータ式",
+    type:"text",
+    text:"上記の問12のプログラムを実行した結果を記述しなさい。",
+    context:"問12では、data = [6, 5, 4, 3, 2]の要素と添え字を足し合わせています。",
+    answer:"[6, 6, 6, 6, 6]",
+    accepted:[
+      "[6,6,6,6,6]"
+    ],
+    explanation:"添え字は0、1、2、3、4です。計算は0 + 6、1 + 5、2 + 4、3 + 3、4 + 2となり、すべて6になります。そのため結果は[6, 6, 6, 6, 6]です。"
+  },
+  {
+    category:"リスト内包表記・ジェネレータ式",
+    type:"text",
+    text:"下記は、1～4の整数を3倍した値でリストを生成するコードである。空欄①に当てはまるコードを記述しなさい。",
+    code:`data = [i * 3 for i in ①]
+
+print(data)`,
+    answer:"range(1, 5)",
+    accepted:[
+      "range(1,5)"
+    ],
+    explanation:"1～4を順番に取り出すにはrange(1, 5)を使います。rangeの終了値5は含まれません。各値を3倍するため、結果は[3, 6, 9, 12]です。"
+  },
+  {
+    category:"リスト内包表記・ジェネレータ式",
+    type:"text",
+    text:"下記は、1～24の整数から4の倍数だけを取り出してリストを生成するコードである。空欄①に当てはまる数値を記述しなさい。",
+    code:`data = [
+    i
+    for i in range(1, 25)
+    if i % ① == 0
+]
+
+print(data)`,
+    answer:"4",
+    accepted:[
+      "4"
+    ],
+    explanation:"4の倍数は、4で割った余りが0になる数です。そのため条件をi % 4 == 0とします。結果は[4, 8, 12, 16, 20, 24]です。"
+  },
+  {
+    category:"リスト内包表記・ジェネレータ式",
+    type:"multi",
+    text:"Pythonの内包表記とジェネレータ式について、適切な記述をア～クの中から4つ答えなさい（完答）。",
+    options:[
+      ["ア","リスト内包表記では、全体を［ ］で囲む。"],
+      ["イ","丸括弧を使用すると、必ずタプル内包表記になる。"],
+      ["ウ","集合内包表記では、全体を｛ ｝で囲む。"],
+      ["エ","辞書内包表記では、値だけを記述し、キーは記述できない。"],
+      ["オ","辞書内包表記では、キーと値をコロンで区切って記述する。"],
+      ["カ","内包表記では、ifによる条件を一切使用できない。"],
+      ["キ","丸括弧を使用した内包表記に似た記述は、ジェネレータ式になる。"],
+      ["ク","内包表記は複雑な多重処理でも必ず通常のfor文より読みやすくなる。"]
+    ],
+    answer:["ア","ウ","オ","キ"],
+    answerDisplay:"ア、ウ、オ、キ",
+    explanation:"リスト内包表記は角括弧、集合内包表記は波括弧を使います。辞書内包表記では「キー: 値」の形で記述します。丸括弧を使った同様の記述はタプル内包表記ではなくジェネレータ式です。内包表記にifを追加することもできますが、複雑にしすぎると可読性が下がります。"
+  },
+  {
+    category:"デコレータ",
+    type:"choice",
+    text:"Pythonのデコレータについて、最も適切な記述をア～オの中から答えなさい。",
+    options:[
+      ["ア","デコレータは、関数の引数をすべて削除するためだけの機能である。"],
+      ["イ","デコレータは、元の関数を直接書き換えずに、関数の前後へ処理を追加できる。"],
+      ["ウ","デコレータを使うと、すべての関数が自動的に非同期処理になる。"],
+      ["エ","デコレータは、リストの要素を並べ替えるための構文である。"],
+      ["オ","デコレータを使った関数は、戻り値を返せなくなる。"]
+    ],
+    answer:"イ",
+    explanation:"デコレータは、元の関数本体を直接変更せずに、関数の実行前後へ別の処理を追加する仕組みです。ログ、実行時間の計測、認証、キャッシュ、引数の確認などに利用されます。"
+  },
+  {
+    category:"デコレータ",
+    type:"choice",
+    text:"デコレータ関数の内部で定義された関数について、最も適切な記述をア～ウの中から答えなさい。",
+    options:[
+      ["ア","内部で定義した関数は、必ずプログラム内のどこからでも直接呼び出せる。"],
+      ["イ","内部で定義した関数は、通常、その関数が定義された外側の関数内で扱われる。"],
+      ["ウ","関数の内部に別の関数を定義すると、必ずSyntaxErrorになる。"]
+    ],
+    answer:"イ",
+    explanation:"関数の中に別の関数を定義することは可能です。その内部関数は通常、外側の関数のスコープ内で扱われます。デコレータでは、この内部関数をwrapperなどの名前で定義し、追加処理を行った後に返す方法がよく使われます。"
+  },
+  {
+    category:"デコレータ",
+    type:"choice",
+    text:"下記のデコレータ関数で、目的の関数を実行した後、戻り値を返す前に追加処理を行いたい。記述する場所をア～オの中から答えなさい。",
+    code:`def logging_decorator(func):
+    【ア】
+
+    def wrapper(*args, **kwargs):
+        【イ】
+
+        result = func(*args, **kwargs)
+
+        【ウ】
+        return result
+
+        【エ】
+
+    return wrapper
+
+【オ】`,
+    options:[
+      ["ア","logging_decorator関数の先頭"],
+      ["イ","目的の関数を呼び出す前"],
+      ["ウ","目的の関数を呼び出した後、return resultの前"],
+      ["エ","return resultの後"],
+      ["オ","logging_decorator関数の外側"]
+    ],
+    answer:"ウ",
+    explanation:"目的の関数はresult = func(*args, **kwargs)で実行されます。その実行後で、戻り値を呼び出し元へ返す前に処理したい場合は、funcの呼び出しとreturn resultの間にある【ウ】へ記述します。returnの後に書いた処理は通常実行されません。"
+  },
+  {
+    category:"デコレータ",
+    type:"text",
+    text:"下記のtest関数に、time_logという名前のデコレータを適用したい。空欄①に当てはまる1行を記述しなさい。",
+    code:`①
+def test():
+    print("処理を開始します")
+    time.sleep(2)`,
+    answer:"@time_log",
+    accepted:[
+      "@time_log"
+    ],
+    explanation:"デコレータを関数へ適用するときは、関数定義の直前に「@デコレータ名」と記述します。今回はデコレータ名がtime_logなので、空欄には@time_logを記述します。"
+  },
+  {
+    category:"デコレータ",
+    type:"tf",
+    text:"Pythonのデコレータに関する次の記述について、正しい場合は「○」、誤っている場合は「×」を選びなさい。",
+    statements:[
+      ["ア","関数の呼び出し回数や実行時刻を記録するデコレータを作ることができる。"],
+      ["イ","一度取得したデータを保存し、次回は保存済みの結果を返すデコレータを作ることができる。"],
+      ["ウ","関数へ渡された引数が条件を満たすか確認するデコレータを作ることができる。"],
+      ["エ","1つの関数に適用できるデコレータは、必ず1つだけである。"],
+      ["オ","複数のデコレータを重ねた場合でも、適用する順番によって結果が変化することはない。"]
+    ],
+    answer:{
+      "ア":"○",
+      "イ":"○",
+      "ウ":"○",
+      "エ":"×",
+      "オ":"×"
+    },
+    answerDisplay:"ア ○、イ ○、ウ ○、エ ×、オ ×",
+    explanation:"ログの記録、キャッシュ、引数の検証はデコレータの代表的な用途です。1つの関数に複数のデコレータを重ねて適用することもできます。ただし、デコレータは記述順に応じて包み込まれる順番が変わるため、適用順によって結果が変わる場合があります。"
+  },
+  {
+    category:"例外処理",
+    type:"text",
+    text:"下記の空欄①に当てはまる記号を記述し、except文を完成させなさい。",
+    code:`x = 8
+y = 0
+
+try:
+    print(x / y)
+except ZeroDivisionError ①
+    print("0では割れません")`,
+    answer:":",
+    accepted:[
+      ":"
+    ],
+    explanation:"except文では、捕捉する例外クラスの後ろにコロンが必要です。完成形は「except ZeroDivisionError:」です。x / yでは8を0で割ろうとするためZeroDivisionErrorが発生し、exceptブロックが実行されます。"
+  },
+  {
+    category:"例外処理",
+    type:"text",
+    text:"下記のコードAとコードBの実行結果を、それぞれ記述しなさい（完答）。",
+    code:`x = 8
+
+# コードA
+try:
+    print(x / 2)
+except ZeroDivisionError:
+    print("division error")
+
+# コードB
+try:
+    print(x / 0)
+except ZeroDivisionError:
+    print("division error")`,
+    placeholder:"A：○○　B：○○",
+    answer:"A：4.0、B：division error",
+    requiredWords:[
+      ["a:4.0","a：4.0","a4.0"],
+      ["b:divisionerror","b：divisionerror","bdivisionerror"]
+    ],
+    explanation:"コードAでは8 / 2が正常に計算され、Pythonの通常の除算結果として4.0が表示されます。コードBでは8 / 0によってZeroDivisionErrorが発生するため、exceptブロックへ移動し、division errorが表示されます。"
+  },
+  {
+    category:"例外処理",
+    type:"multi",
+    text:"Pythonの例外処理に関する記述について、適切なものをア～オの中から3つ答えなさい（完答）。",
+    options:[
+      ["ア","tryで例外が発生しなかった場合、対応するelseブロックを実行できる。"],
+      ["イ","finallyブロックは、例外が発生すると絶対に実行されない。"],
+      ["ウ","異なる例外に対応するため、exceptブロックを複数記述できる。"],
+      ["エ","exceptの後ろには、例外クラスを一切指定できない。"],
+      ["オ","raise文を使うと、プログラム内で意図的に例外を発生させることができる。"]
+    ],
+    answer:["ア","ウ","オ"],
+    answerDisplay:"ア、ウ、オ",
+    explanation:"tryで例外が発生しなかった場合にelseブロックを実行できます。また、異なる例外へ対応するためにexceptを複数記述できます。raise文では意図的に例外を発生させられます。finallyは例外の有無にかかわらず原則として実行されます。"
+  },
+  {
+    category:"例外処理",
+    type:"choice",
+    text:"下記のプログラムの実行結果をア～カの中から答えなさい。",
+    code:`print("Start")
+
+try:
+    numbers = range(3)
+    print("Check")
+    print(numbers[3])
+    print("Success")
+
+except IndexError:
+    print("Index Error")
+
+finally:
+    print("End")`,
+    options:[
+      ["ア","Startだけが表示される。"],
+      ["イ","Start、Check、Success、Index Error、Endが表示される。"],
+      ["ウ","Start、Check、Index Error、Endが表示される。"],
+      ["エ","Start、Check、Success、Endが表示される。"],
+      ["オ","Index Errorだけが表示される。"],
+      ["カ","Endだけが表示される。"]
+    ],
+    answer:"ウ",
+    explanation:"range(3)の要素は0、1、2で、有効な添え字も0～2です。numbers[3]を参照するとIndexErrorが発生します。そのためSuccessは表示されず、exceptのIndex ErrorとfinallyのEndが表示されます。"
+  },
+  {
+    category:"例外処理",
+    type:"choice",
+    text:"下記のプログラムを実行した場合、発生する可能性のない例外をア～エの中から答えなさい。",
+    code:`count = 0
+total = 0
+scores = [0, 0, 0, 0]
+
+while True:
+    score = int(input("点数を入力してください（-1で終了）> "))
+
+    if score == -1:
+        break
+
+    scores[count] = score
+    count += 1
+
+for i in range(count):
+    total += scores[i]
+
+average = total / count
+
+print("入力数は", count, "です。")
+print("合計点は", total, "です。")
+print("平均点は", average, "です。")`,
+    options:[
+      ["ア","KeyError（辞書に存在しないキーを指定したときなどに発生する例外）"],
+      ["イ","ZeroDivisionError（0で除算したときに発生する例外）"],
+      ["ウ","IndexError（リストの範囲外の添え字を指定したときに発生する例外）"],
+      ["エ","ValueError（値を適切な形式へ変換できないときなどに発生する例外）"]
+    ],
+    answer:"ア",
+    explanation:"このプログラムでは辞書やキーを使用していないため、KeyErrorは発生しません。最初に-1を入力するとcountが0のままなのでZeroDivisionError、5個以上の点数を入力するとIndexError、数字以外の文字を入力するとint()でValueErrorが発生する可能性があります。"
+  }
+];
+
+let current=0;
+let answers={};
+let checked={};
+let revealedEver={};
+let answerVisible={};
+let finalResults=[];
+let resultDisplayed=false;
+
+const STORAGE_KEY="pythonQuizStateSimilarV2";
+const SCORE_KEY="pythonQuizLastScoreSimilarV2";
+
+const quizContainer=document.getElementById("quizContainer");
+const numberList=document.getElementById("numberList");
+const counter=document.getElementById("counter");
+const progressBar=document.getElementById("progressBar");
+const resultCard=document.getElementById("resultCard");
+const bottomNav=document.getElementById("bottomNav");
+const intro=document.getElementById("intro");
+
+function escapeHtml(value){
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function normalize(value){
+  return String(value??"")
+    .toLowerCase()
+    .replace(/[　\s]/g,"")
+    .replace(/[，、]/g,",")
+    .replace(/：/g,":")
+    .replace(/[［【]/g,"[")
+    .replace(/[］】]/g,"]")
+    .replace(/（/g,"(")
+    .replace(/）/g,")")
+    .replace(/；/g,";");
+}
+
+function getPrimaryButtonText(index){
+  const isLast=index===questions.length-1;
+
+  if(checked[index]||revealedEver[index]){
+    return isLast
+      ?"採点結果を見る"
+      :"次の問題へ →";
+  }
+
+  return "答え合わせ";
+}
+
+function renderQuestions(){
+  quizContainer.innerHTML=questions.map((q,index)=>{
+    let answerArea="";
+
+    if(q.type==="text"){
+      answerArea=`
+        <input
+          class="text-answer"
+          id="answer-${index}"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="${escapeHtml(q.placeholder||"ここに回答を入力")}"
+          value="${escapeHtml(answers[index]||"")}"
+          oninput="saveTextAnswer(${index},this.value)"
+        >
+      `;
+    }
+
+    if(q.type==="choice"||q.type==="multi"){
+      const inputType=q.type==="choice"?"radio":"checkbox";
+
+      answerArea=`
+        <div class="options ${q.options.length<=4?"two-column":""}">
+          ${q.options.map(([label,text])=>`
+            <label class="option">
+              <input
+                type="${inputType}"
+                name="question-${index}"
+                value="${label}"
+                ${isOptionSelected(index,label,q.type)?"checked":""}
+                onchange="saveOptionAnswer(${index},'${label}','${q.type}')"
+              >
+              <span class="option-label">${label}.</span>
+              <span class="option-text">${escapeHtml(text)}</span>
+            </label>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    if(q.type==="tf"){
+      answerArea=`
+        <div class="tf-grid">
+          ${q.statements.map(([label,text])=>`
+            <div class="tf-row">
+              <div class="tf-statement">
+                <strong>${label}.</strong>
+                ${escapeHtml(text)}
+              </div>
+
+              <div class="tf-buttons">
+                <label>
+                  <input
+                    type="radio"
+                    name="tf-${index}-${label}"
+                    value="○"
+                    ${answers[index]?.[label]==="○"?"checked":""}
+                    onchange="saveTfAnswer(${index},'${label}','○')"
+                  >
+                  ○ 正しい
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="tf-${index}-${label}"
+                    value="×"
+                    ${answers[index]?.[label]==="×"?"checked":""}
+                    onchange="saveTfAnswer(${index},'${label}','×')"
+                  >
+                  × 誤り
+                </label>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    return`
+      <article
+        class="quiz-card ${index===current&&!resultDisplayed?"active":""}"
+        id="question-${index}"
+      >
+        <div class="category">${escapeHtml(q.category)}</div>
+
+        <h2 class="question-number">
+          問${String(index+1).padStart(2,"0")}
+        </h2>
+
+        <div class="question-text">${escapeHtml(q.text)}</div>
+
+        ${q.context
+          ?`<div class="context">${escapeHtml(q.context)}</div>`
+          :""
+        }
+
+        ${q.code
+          ?`<pre><code>${escapeHtml(q.code)}</code></pre>`
+          :""
+        }
+
+        ${answerArea}
+
+        <div class="feedback" id="feedback-${index}"></div>
+
+        <div class="controls">
+          <button
+            type="button"
+            class="btn btn-answer ${answerVisible[index]?"open":""}"
+            id="answer-toggle-${index}"
+            onclick="toggleAnswer(${index})"
+          >
+            ${answerVisible[index]
+              ?"🙈 答えと解説を隠す"
+              :"👁 答えを見る"
+            }
+          </button>
+
+          <div class="control-bottom">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="previousQuestion()"
+              ${index===0?"disabled":""}
+            >
+              ← 前へ
+            </button>
+
+            <button
+              type="button"
+              class="btn ${index===questions.length-1?"btn-submit":"btn-primary"}"
+              id="primary-button-${index}"
+              onclick="handlePrimaryAction(${index})"
+            >
+              ${getPrimaryButtonText(index)}
+            </button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  renderNumberList();
+  updateHeader();
+  restoreFeedbackDisplays();
+}
+
+function restoreFeedbackDisplays(){
+  questions.forEach((_,index)=>{
+    if(answerVisible[index]){
+      if(checked[index]){
+        showFeedback(index);
+      }else{
+        showRevealedAnswer(index);
+      }
+    }else{
+      hideFeedback(index);
+    }
+
+    updateAnswerButton(index);
+    updatePrimaryButton(index);
+  });
+}
+
+function renderNumberList(){
+  numberList.innerHTML=questions.map((_,index)=>`
+    <button
+      type="button"
+      class="number-btn
+        ${index===current&&!resultDisplayed?"current":""}
+        ${hasAnswer(index)?"answered":""}
+        ${revealedEver[index]&&!hasAnswer(index)?"viewed":""}"
+      onclick="goToQuestion(${index})"
+      title="問${index+1}"
+    >
+      ${index+1}
+    </button>
+  `).join("");
+
+  setTimeout(()=>{
+    numberList.children[current]?.scrollIntoView({
+      behavior:"smooth",
+      inline:"center",
+      block:"nearest"
+    });
+  },50);
+}
+
+function isOptionSelected(index,label,type){
+  if(type==="choice"){
+    return answers[index]===label;
+  }
+
+  return Array.isArray(answers[index])&&
+    answers[index].includes(label);
+}
+
+function saveTextAnswer(index,value){
+  answers[index]=value;
+
+  if(!revealedEver[index]){
+    checked[index]=false;
+    answerVisible[index]=false;
+  }
+
+  refreshQuestionFeedback(index);
+  updatePrimaryButton(index);
+  saveState();
+  renderNumberList();
+}
+
+function saveOptionAnswer(index,label,type){
+  if(type==="choice"){
+    answers[index]=label;
+  }else{
+    const selected=Array.isArray(answers[index])
+      ?[...answers[index]]
+      :[];
+
+    const position=selected.indexOf(label);
+
+    if(position>=0){
+      selected.splice(position,1);
+    }else{
+      selected.push(label);
+    }
+
+    answers[index]=selected;
+  }
+
+  if(!revealedEver[index]){
+    checked[index]=false;
+    answerVisible[index]=false;
+  }
+
+  refreshQuestionFeedback(index);
+  updatePrimaryButton(index);
+  saveState();
+  renderNumberList();
+}
+
+function saveTfAnswer(index,label,value){
+  if(
+    !answers[index]||
+    typeof answers[index]!=="object"||
+    Array.isArray(answers[index])
+  ){
+    answers[index]={};
+  }
+
+  answers[index][label]=value;
+
+  if(!revealedEver[index]){
+    checked[index]=false;
+    answerVisible[index]=false;
+  }
+
+  refreshQuestionFeedback(index);
+  updatePrimaryButton(index);
+  saveState();
+  renderNumberList();
+}
+
+function refreshQuestionFeedback(index){
+  if(answerVisible[index]){
+    if(checked[index]){
+      showFeedback(index);
+    }else{
+      showRevealedAnswer(index);
+    }
+  }else{
+    hideFeedback(index);
+  }
+}
+
+function hasAnswer(index){
+  const q=questions[index];
+  const value=answers[index];
+
+  if(q.type==="text"){
+    return normalize(value).length>0;
+  }
+
+  if(q.type==="choice"){
+    return Boolean(value);
+  }
+
+  if(q.type==="multi"){
+    return Array.isArray(value)&&value.length>0;
+  }
+
+  if(q.type==="tf"){
+    return value&&Object.keys(value).length>0;
+  }
+
+  return false;
+}
+
+function isComplete(index){
+  const q=questions[index];
+  const value=answers[index];
+
+  if(q.type==="tf"){
+    return value&&
+      q.statements.every(([label])=>value[label]);
+  }
+
+  return hasAnswer(index);
+}
+
+function checkAnswer(index){
+  const q=questions[index];
+  const value=answers[index];
+
+  if(q.type==="choice"){
+    return value===q.answer;
+  }
+
+  if(q.type==="multi"){
+    const selected=Array.isArray(value)
+      ?[...value].sort()
+      :[];
+
+    const correct=[...q.answer].sort();
+
+    return JSON.stringify(selected)===
+      JSON.stringify(correct);
+  }
+
+  if(q.type==="tf"){
+    if(!value){
+      return false;
+    }
+
+    return Object.keys(q.answer).every(
+      key=>value[key]===q.answer[key]
+    );
+  }
+
+  const normalizedValue=normalize(value);
+
+  if(q.requiredWords){
+    return q.requiredWords.every(group=>
+      group.some(word=>
+        normalizedValue.includes(normalize(word))
+      )
+    );
+  }
+
+  const accepted=[
+    q.answer,
+    ...(q.accepted||[])
+  ].map(normalize);
+
+  return accepted.includes(normalizedValue);
+}
+
+function getCorrectAnswer(q){
+  if(q.answerDisplay){
+    return q.answerDisplay;
+  }
+
+  if(Array.isArray(q.answer)){
+    return q.answer.join("、");
+  }
+
+  if(typeof q.answer==="object"){
+    return Object.entries(q.answer)
+      .map(([key,value])=>`${key} ${value}`)
+      .join("、");
+  }
+
+  return q.answer;
+}
+
+function showFeedback(index){
+  const feedback=document.getElementById(
+    `feedback-${index}`
+  );
+
+  if(!feedback){
+    return;
+  }
+
+  const q=questions[index];
+  const correct=checkAnswer(index);
+
+  feedback.className=
+    `feedback show ${correct?"correct":"incorrect"}`;
+
+  feedback.innerHTML=`
+    <div class="feedback-title">
+      ${correct?"○ 正解です！":"× 不正解です"}
+    </div>
+
+    <div class="answer-box">
+      <strong>正解：</strong>
+      ${escapeHtml(getCorrectAnswer(q))}
+    </div>
+
+    <div class="explanation-box">
+      <strong>詳しい解説：</strong><br>
+      ${escapeHtml(q.explanation)}
+    </div>
+  `;
+}
+
+function showRevealedAnswer(index){
+  const feedback=document.getElementById(
+    `feedback-${index}`
+  );
+
+  if(!feedback){
+    return;
+  }
+
+  const q=questions[index];
+
+  const resultText=hasAnswer(index)
+    ?`
+      <div class="reveal-note">
+        現在のあなたの回答は
+        <strong>${checkAnswer(index)?"正解":"不正解"}</strong>
+        です。
+      </div>
+    `
+    :`
+      <div class="reveal-note">
+        未回答のままでも、解説を読んでから次の問題へ進めます。
+      </div>
+    `;
+
+  feedback.className="feedback show revealed";
+
+  feedback.innerHTML=`
+    <div class="feedback-title">
+      正解と解説
+    </div>
+
+    <div class="answer-box">
+      <strong>正解：</strong>
+      ${escapeHtml(getCorrectAnswer(q))}
+    </div>
+
+    <div class="explanation-box">
+      <strong>詳しい解説：</strong><br>
+      ${escapeHtml(q.explanation)}
+    </div>
+
+    ${resultText}
+  `;
+}
+
+function hideFeedback(index){
+  const feedback=document.getElementById(
+    `feedback-${index}`
+  );
+
+  if(!feedback){
+    return;
+  }
+
+  feedback.className="feedback";
+  feedback.innerHTML="";
+}
+
+function toggleAnswer(index){
+  if(answerVisible[index]){
+    answerVisible[index]=false;
+    hideFeedback(index);
+  }else{
+    answerVisible[index]=true;
+
+    if(checked[index]){
+      showFeedback(index);
+    }else{
+      revealedEver[index]=true;
+      showRevealedAnswer(index);
+    }
+
+    const feedback=document.getElementById(
+      `feedback-${index}`
+    );
+
+    if(feedback){
+      setTimeout(()=>{
+        feedback.scrollIntoView({
+          behavior:"smooth",
+          block:"center"
+        });
+      },100);
+    }
+  }
+
+  updateAnswerButton(index);
+  updatePrimaryButton(index);
+  renderNumberList();
+  saveState();
+}
+
+function updateAnswerButton(index){
+  const button=document.getElementById(
+    `answer-toggle-${index}`
+  );
+
+  if(!button){
+    return;
+  }
+
+  if(answerVisible[index]){
+    button.textContent="🙈 答えと解説を隠す";
+    button.classList.add("open");
+  }else{
+    button.textContent="👁 答えを見る";
+    button.classList.remove("open");
+  }
+}
+
+function updatePrimaryButton(index){
+  const button=document.getElementById(
+    `primary-button-${index}`
+  );
+
+  if(!button){
+    return;
+  }
+
+  button.textContent=getPrimaryButtonText(index);
+}
+
+function handlePrimaryAction(index){
+  if(index!==current){
+    current=index;
+  }
+
+  const isLast=
+    current===questions.length-1;
+
+  if(checked[current]||revealedEver[current]){
+    if(isLast){
+      finishQuiz();
+    }else{
+      goToQuestion(current+1);
+    }
+
+    return;
+  }
+
+  if(!isComplete(current)){
+    const show=confirm(
+      "まだ回答していません。\n"+
+      "正解と詳しい解説を表示しますか？"
+    );
+
+    if(show){
+      answerVisible[current]=true;
+      revealedEver[current]=true;
+
+      showRevealedAnswer(current);
+      updateAnswerButton(current);
+      updatePrimaryButton(current);
+      renderNumberList();
+      saveState();
+
+      scrollToFeedback(current);
+    }
+
+    return;
+  }
+
+  checked[current]=true;
+  answerVisible[current]=true;
+
+  showFeedback(current);
+  updateAnswerButton(current);
+  updatePrimaryButton(current);
+  renderNumberList();
+  saveState();
+
+  scrollToFeedback(current);
+}
+
+function scrollToFeedback(index){
+  const feedback=document.getElementById(
+    `feedback-${index}`
+  );
+
+  if(!feedback){
+    return;
+  }
+
+  setTimeout(()=>{
+    feedback.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+  },100);
+}
+
+function previousQuestion(){
+  if(current>0){
+    goToQuestion(current-1);
+  }
+}
+
+function goToQuestion(index){
+  if(index<0||index>=questions.length){
+    return;
+  }
+
+  if(resultDisplayed){
+    resultDisplayed=false;
+    resultCard.classList.remove("show");
+    intro.style.display="block";
+    bottomNav.style.display="block";
+  }
+
+  current=index;
+
+  document.querySelectorAll(".quiz-card")
+    .forEach((card,i)=>{
+      card.classList.toggle(
+        "active",
+        i===current
+      );
+    });
+
+  renderNumberList();
+  updateHeader();
+  restoreFeedbackDisplays();
+  saveState();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function updateHeader(){
+  counter.textContent=
+    `${current+1} / ${questions.length}`;
+
+  const completedCount=questions.reduce(
+    (count,_,index)=>
+      count+
+      (
+        hasAnswer(index)||
+        revealedEver[index]
+          ?1
+          :0
+      ),
+    0
+  );
+
+  progressBar.style.width=
+    `${(completedCount/questions.length)*100}%`;
+}
+
+function finishQuiz(){
+  const unanswered=questions
+    .map((_,index)=>index)
+    .filter(index=>!isComplete(index));
+
+  if(unanswered.length>0){
+    const proceed=confirm(
+      `未回答の問題が${unanswered.length}問あります。\n`+
+      "未回答は不正解として採点されます。\n"+
+      "このまま採点しますか？"
+    );
+
+    if(!proceed){
+      goToQuestion(unanswered[0]);
+      return;
+    }
+  }
+
+  finalResults=questions.map(
+    (_,index)=>checkAnswer(index)
+  );
+
+  const score=finalResults.filter(Boolean).length;
+
+  resultDisplayed=true;
+
+  document.querySelectorAll(".quiz-card")
+    .forEach(card=>{
+      card.classList.remove("active");
+    });
+
+  intro.style.display="none";
+  bottomNav.style.display="none";
+  resultCard.classList.add("show");
+
+  document.getElementById("scoreMain")
+    .textContent=score;
+
+  document.getElementById("scoreSub")
+    .textContent=`/ ${questions.length}問`;
+
+  const percentage=Math.round(
+    score/questions.length*100
+  );
+
+  let message="";
+
+  if(percentage===100){
+    message="全問正解です！完璧です。";
+  }else if(percentage>=80){
+    message="よくできました！間違えた問題を確認しましょう。";
+  }else if(percentage>=60){
+    message="合格圏です。苦手な項目を復習しましょう。";
+  }else{
+    message="解説を確認しながら、もう一度挑戦しましょう。";
+  }
+
+  document.getElementById("resultMessage")
+    .textContent=
+      `${percentage}％　${message}`;
+
+  document.getElementById("reviewList")
+    .innerHTML=
+      finalResults.map((correct,index)=>`
+        <div class="review-item ${correct?"ok":"ng"}">
+          <strong>
+            問${String(index+1).padStart(2,"0")}：
+          </strong>
+
+          ${correct?"○ 正解":"× 不正解"}
+
+          ${revealedEver[index]
+            ?`<span class="small">（答えを閲覧済み）</span>`
+            :""
+          }
+
+          ${!correct
+            ?`
+              <div class="small">
+                正解：
+                ${escapeHtml(
+                  getCorrectAnswer(questions[index])
+                )}
+              </div>
+            `
+            :""
+          }
+        </div>
+      `).join("");
+
+  localStorage.setItem(
+    SCORE_KEY,
+    JSON.stringify({
+      score,
+      total:questions.length,
+      date:new Date().toISOString()
+    })
+  );
+
+  saveState();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function reviewMistakes(){
+  const firstMistake=finalResults.findIndex(
+    result=>!result
+  );
+
+  resultDisplayed=false;
+  resultCard.classList.remove("show");
+  intro.style.display="block";
+  bottomNav.style.display="block";
+
+  if(firstMistake===-1){
+    goToQuestion(0);
+    return;
+  }
+
+  finalResults.forEach((correct,index)=>{
+    if(!correct){
+      revealedEver[index]=true;
+      answerVisible[index]=true;
+    }
+  });
+
+  goToQuestion(firstMistake);
+}
+
+function resetQuiz(){
+  const hasProgress=
+    Object.keys(answers).length>0||
+    Object.keys(revealedEver).length>0||
+    Object.keys(checked).length>0||
+    resultDisplayed;
+
+  const message=hasProgress
+    ?"すべての回答、採点結果、答えの閲覧履歴、進捗を削除して最初からやり直しますか？"
+    :"クイズを最初の状態に戻しますか？";
+
+  if(!confirm(message)){
+    return;
+  }
+
+  answers={};
+  checked={};
+  revealedEver={};
+  answerVisible={};
+  finalResults=[];
+  current=0;
+  resultDisplayed=false;
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(SCORE_KEY);
+
+  resultCard.classList.remove("show");
+  intro.style.display="block";
+  bottomNav.style.display="block";
+
+  renderQuestions();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function saveState(){
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      current,
+      answers,
+      checked,
+      revealedEver,
+      answerVisible,
+      finalResults
+    })
+  );
+
+  updateHeader();
+}
+
+function loadState(){
+  try{
+    const data=JSON.parse(
+      localStorage.getItem(STORAGE_KEY)
+    );
+
+    if(!data){
+      return;
+    }
+
+    current=Number.isInteger(data.current)
+      ?Math.min(
+          Math.max(data.current,0),
+          questions.length-1
+        )
+      :0;
+
+    answers=data.answers||{};
+    checked=data.checked||{};
+    revealedEver=data.revealedEver||{};
+    answerVisible=data.answerVisible||{};
+    finalResults=Array.isArray(data.finalResults)
+      ?data.finalResults
+      :[];
+
+    resultDisplayed=false;
+  }catch(error){
+    console.warn(
+      "保存データを読み込めませんでした。",
+      error
+    );
+  }
+}
+
+/* PC用キーボード操作 */
+document.addEventListener("keydown",event=>{
+  const activeTag=document.activeElement?.tagName;
+
+  const isInput=
+    activeTag==="INPUT"||
+    activeTag==="TEXTAREA"||
+    activeTag==="SELECT";
+
+  if(isInput||resultDisplayed){
+    return;
+  }
+
+  if(event.key==="ArrowLeft"){
+    event.preventDefault();
+    previousQuestion();
+  }
+
+  if(event.key==="ArrowRight"){
+    event.preventDefault();
+
+    if(current<questions.length-1){
+      goToQuestion(current+1);
+    }
+  }
+});
+
+loadState();
+renderQuestions();
+</script>
+
+</body>
+</html>
